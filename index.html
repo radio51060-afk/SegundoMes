@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Nuestro Diario | Capítulo 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* PALETA ROSA ELEGANTE Y DETALLADA */
+            --rosa-mexicano: #E4007C;
+            --rosa-lomo: #A01A58; /* Magenta oscuro/vino para el lomo */
+            --rosa-fondo: #FCE8F0; /* Fondo de la mesa */
+            --papel: #FFFCFD; /* Blanco con un levísimo toque rosa para las hojas */
+            --papel-sombra: #F9EBF0;
+            --texto-oscuro: #2A1A21;
+            --texto-claro: #6B555D;
+            --oro-decorativo: #D4AF37; /* Toques dorados elegantes */
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body {
+            background-color: var(--rosa-fondo);
+            /* Un patrón muy sutil de puntos de fondo para que no se vea plano */
+            background-image: radial-gradient(rgba(228, 0, 124, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            font-family: 'Lexend', sans-serif;
+            color: var(--texto-oscuro);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom);
+            overflow: hidden; 
+        }
+
+        /* --- EL LIBRO (Estructura 3D Mejorada) --- */
+        .book-container {
+            width: 100%;
+            max-width: 500px;
+            height: 85vh;
+            max-height: 850px;
+            position: relative;
+            background-color: var(--papel-sombra);
+            /* El lomo físico del libro */
+            border-left: 18px solid var(--rosa-lomo); 
+            border-radius: 4px 18px 18px 4px;
+            
+            /* MAGIA 3D: Sombras múltiples para crear el "Grosor" de las páginas */
+            box-shadow: 
+                -10px 0 20px rgba(160, 26, 88, 0.15),
+                inset 5px 0 10px rgba(0,0,0,0.2),
+                2px 0 0 #fff, 3px 0 0 #f0e1e6, 4px 0 0 #fff, 5px 0 0 #f0e1e6, 6px 0 0 #fff, /* Grosor lateral */
+                15px 15px 35px rgba(0,0,0,0.15); 
+            
+            perspective: 2000px; 
+        }
+
+        /* Textura sutil del lomo (hilos y desgaste) */
+        .book-container::before {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0; left: 0;
+            width: 4px;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255,255,255,0.1) 0,
+                rgba(255,255,255,0.1) 6px,
+                rgba(0,0,0,0.1) 6px,
+                rgba(0,0,0,0.1) 12px
+            );
+            z-index: 50;
+        }
+
+        /* LISTÓN SEPARADOR (El toque maestro) */
+        .bookmark-ribbon {
+            position: absolute;
+            top: -15px;
+            left: 50px;
+            width: 18px;
+            height: 80px;
+            background: linear-gradient(to right, #C2185B, #E91E63, #C2185B);
+            box-shadow: 2px 5px 10px rgba(0,0,0,0.2);
+            z-index: 5; /* Detrás de las hojas activas */
+            border-radius: 0 0 3px 3px;
+        }
+
+        /* Terminación en 'V' del listón */
+        .bookmark-ribbon::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; left: 0;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-top: 10px solid #C2185B;
+        }
+
+        /* --- LAS PÁGINAS --- */
+        .pages-wrapper {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            transform-style: preserve-3d;
+        }
+
+        .page {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--papel);
+            border-radius: 0 12px 12px 0;
+            padding: 35px 25px 90px 25px; 
+            
+            /* Borde interior elegante estilo libro viejo */
+            border: 1px solid rgba(228, 0, 124, 0.1);
+            outline: 1px solid rgba(228, 0, 124, 0.05);
+            outline-offset: -6px;
+            
+            /* Sombra curva del lomo hacia la página */
+            background-image: linear-gradient(to right, rgba(0,0,0,0.1) 0%, transparent 8%, transparent 100%);
+            
+            transform-origin: left center; 
+            transition: transform 0.95s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.6s ease;
+            
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            overflow-x: hidden;
+            
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Estados 3D de las páginas */
+        .page.active {
+            opacity: 1; transform: rotateY(0deg); z-index: 10; pointer-events: all;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.03);
+        }
+        .page.turned { opacity: 0; transform: rotateY(-100deg); z-index: 1; }
+        .page.future { opacity: 0; transform: rotateY(15deg); z-index: 1; }
+
+        /* --- DECORACIÓN Y CONTENIDO DE LA PÁGINA --- */
+        .page-decor {
+            text-align: center;
+            color: var(--oro-decorativo);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            opacity: 0.6;
+        }
+
+        .fecha-capitulo {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--rosa-mexicano);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        /* Líneas a los lados de la fecha */
+        .fecha-capitulo::before, .fecha-capitulo::after {
+            content: '';
+            position: absolute;
+            top: 50%; width: 25px; height: 1px;
+            background-color: var(--rosa-claro);
+        }
+        .fecha-capitulo::before { left: 0; }
+        .fecha-capitulo::after { right: 0; }
+
+        .titulo-pagina {
+            font-size: 2.2rem;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            color: var(--texto-oscuro);
+            letter-spacing: -1px;
+            text-align: center;
+            font-weight: 900;
+        }
+
+        .texto-pagina {
+            font-size: 1.05rem;
+            line-height: 1.75;
+            color: var(--texto-claro);
+            margin-bottom: 20px;
+            text-align: justify; /* Alineación de libro real */
+        }
+
+        .texto-pagina span { color: var(--rosa-mexicano); font-weight: 600; }
+
+        .media-container {
+            width: calc(100% + 10px);
+            margin-left: -5px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(160, 26, 88, 0.15); /* Sombra magenta */
+            flex-shrink: 0;
+            background-color: var(--papel-sombra);
+            border: 3px solid #fff; /* Marco estilo foto impresa */
+        }
+
+        .media-container img, .media-container video {
+            width: 100%; height: auto; max-height: 38vh; object-fit: cover; display: block;
+        }
+
+        /* Portada especial */
+        .page.cover { justify-content: center; align-items: center; padding: 40px; }
+        .page.cover .titulo-pagina { font-size: 3.8rem; color: var(--rosa-lomo); margin-bottom: 15px; text-shadow: 2px 2px 0px rgba(255,255,255,0.8); }
+        .page.cover .texto-pagina { font-style: italic; font-size: 1.15rem; text-align: center; margin-top: 20px; }
+        .page.cover .ornament { width: 60px; opacity: 0.3; margin: 20px auto; display: block; }
+
+        /* --- CONTROLES DE NAVEGACIÓN --- */
+        .controls {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to top, var(--papel) 75%, rgba(255, 252, 253, 0));
+            z-index: 20;
+            border-radius: 0 0 12px 0;
+        }
+
+        .btn-nav {
+            background: rgba(228, 0, 124, 0.08); 
+            border: 1px solid rgba(228, 0, 124, 0.2);
+            border-radius: 20px;
+            font-family: 'Lexend', sans-serif;
+            font-weight: 600; color: var(--rosa-mexicano); font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            padding: 8px 16px; transition: all 0.3s ease;
+        }
+        
+        .btn-nav:active { transform: scale(0.95); background: rgba(228, 0, 124, 0.15); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; background: transparent; border-color: transparent; }
+        
+        .page-indicator { font-size: 0.85rem; color: #D4AF37; font-weight: 600; letter-spacing: 2px; }
+        
+        .btn-nav.home-link { 
+            position: absolute; top: 15px; right: 15px; z-index: 30; 
+            background: var(--papel); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        @media screen and (max-height: 700px) {
+            .titulo-pagina { font-size: 1.8rem; margin-bottom: 15px; }
+            .texto-pagina { font-size: 0.95rem; line-height: 1.6; }
+            .media-container { margin-bottom: 15px; }
+            .media-container img, .media-container video { max-height: 32vh; }
+            .book-container { height: 90vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="book-container">
+        
+        <!-- El Listón Separador Físico -->
+        <div class="bookmark-ribbon"></div>
+
+        <!-- Botón para regresar al mes 1 -->
+        <a href="index.html" class="btn-nav home-link">Volver al Mes 1</a>
+
+        <div class="pages-wrapper" id="pages-wrapper">
+            
+            <!-- PÁGINA 1: PORTADA -->
+            <div class="page cover active">
+                <div class="page-decor">✨</div>
+                <div class="fecha-capitulo" style="color: var(--texto-claro);">Para Alincita</div>
+                <h1 class="titulo-pagina">Capítulo<br>Dos</h1>
+                <hr style="width: 50%; margin: 0 auto; border: none; border-top: 1px solid var(--rosa-claro);">
+                <p class="texto-pagina">"Qué suerte tengo de tener algo tan especial que decir adiós sea tan difícil."</p>
+            </div>
+
+            <!-- PÁGINA 2: INTRODUCCIÓN -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">3 de Junio</div>
+                <h2 class="titulo-pagina">Nuestro segundo mes</h2>
+                <p class="texto-pagina">Hola, mi linda novia.</p>
+                <p class="texto-pagina">Aunque de nuevo nos toca abrazarnos a la distancia hoy 3 de junio, no quería dejar pasar el día sin recordarte lo inmensamente feliz que me haces. Cuando repaso todo lo que vivimos estas últimas semanas, me doy cuenta de que <span>cada esfuerzo, cada kilómetro y cada viaje vale la pena si es para verte sonreír</span>.</p>
+                <p class="texto-pagina">Aquí tienes los recuerdos de nuestro mes de tilines plasmados en este diario.</p>
+            </div>
+
+            <!-- PÁGINA 3: 4 DE MAYO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">4 de Mayo</div>
+                <h2 class="titulo-pagina">Misión 8</h2>
+                <div class="media-container">
+                    <video controls playsinline poster="portada-mision8.jpg">
+                        <source src="video-mision8.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <p class="texto-pagina">Por fin regresaste de Veracruz. Mi día empezó a las 5 AM para ir por ti a la terminal; fue nuestro primer acercamiento del mes. Más tarde en mi cuarto completé la Misión 8: me tomó horas elegir y adornar estas flores, pero al entregártelas en tu casa y ver tu carita, supe que había logrado hacer algo único.</p>
+            </div>
+
+            <!-- PÁGINA 4: 4 DE MAYO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">4 de Mayo</div>
+                <h2 class="titulo-pagina">Abrazos de papel</h2>
+                <div class="media-container">
+                    <video controls playsinline poster="portada-vela.jpg">
+                        <source src="video-vela.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <p class="texto-pagina">Fuimos al cine, pero antes me sorprendiste apagando una "vela imaginaria" de nuestro pastel. Y no solo eso... el detalle de los Kinder Delice con tus vales, y esa carta especial para cuando necesite un abrazo, me hizo el hombre más feliz. Guardo cada nota en mi cartera.</p>
+            </div>
+
+            <!-- PÁGINA 5: 16 DE MAYO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">16 de Mayo</div>
+                <h2 class="titulo-pagina">Odisea del Turibús</h2>
+                <div class="media-container">
+                    <img src="foto-16mayo.jpg" alt="Turibús">
+                </div>
+                <p class="texto-pagina">Viajé desde Puebla y empezamos ayudándote a abrir el negocio de tu papá, algo que anhelaba compartir contigo. En la tarde, ¡la tercera fue la vencida con el Turibús! Pese a mi error con la hora, el cierre al Zócalo y la lluvia, logramos nuestro paseo nocturno. Terminamos en Coyoacán, comprando a nuestros "hijos" peluches.</p>
+            </div>
+
+            <!-- PÁGINA 6: 17 DE MAYO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">17 de Mayo</div>
+                <h2 class="titulo-pagina">Jamaica a medianoche</h2>
+                <div class="media-container">
+                    <img src="foto-17mayo.jpg" alt="Domingo de novios">
+                </div>
+                <p class="texto-pagina">Un clásico domingo de novios que concluyó perfectamente con unos tacos Tony. Ese mismo día, después del triste momento de despedirnos, tuve la Misión 9 de flores y pude confirmar personalmente un mito: el mercado de Jamaica sí es de 24 horas.</p>
+            </div>
+
+            <!-- PÁGINA 7: 18 DE MAYO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">18 de Mayo</div>
+                <h2 class="titulo-pagina">El Pato Mandarina</h2>
+                <div class="media-container">
+                    <img src="foto-18mayo.jpg" alt="Pato mandarina">
+                </div>
+                <p class="texto-pagina">Nos vimos muy temprano y por fin te entregué tu flor número 9 junto con el "Pato Mandarina", un peluche que había comprado para ti desde el inicio de 2024. Después de tu trabajo fuimos a cenar hamburguesas y al cine. Así cerró esa semana.</p>
+            </div>
+
+            <!-- PÁGINA 8: 23 Y 24 DE MAYO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">23 y 24 de Mayo</div>
+                <h2 class="titulo-pagina">Fresas y Cheesecake</h2>
+                <div class="media-container">
+                    <img src="foto-24mayo.jpg" alt="Coyoacan y Cheesecake">
+                </div>
+                <p class="texto-pagina">El sábado les llevé cemitas y fuimos a caminar por Coyoacán comiendo fresas con crema; me encantan esos momentos contigo. El domingo tuvimos nuestro ratito de novios que cerramos compartiendo un cheesecake con tu familia.</p>
+            </div>
+
+            <!-- PÁGINA 9: 25 DE MAYO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">25 de Mayo</div>
+                <h2 class="titulo-pagina">Viaje Express</h2>
+                <div class="media-container">
+                    <img src="foto-25mayo.jpg" alt="Café juntos">
+                </div>
+                <p class="texto-pagina">Día súper agitado. Me regresé a Puebla en autobús desde las 6 AM y volví a CDMX a las 4 de la tarde solo para poder pasar por ti. Tomamos un cafecito juntos. Cada viaje relámpago lo vale completamente.</p>
+            </div>
+
+            <!-- PÁGINA 10: 26 Y 30 DE MAYO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">26 y 30 de Mayo</div>
+                <h2 class="titulo-pagina">Enchiladas de 10</h2>
+                <div class="media-container">
+                    <img src="foto-30mayo.jpg" alt="Enchiladas Suizas">
+                </div>
+                <p class="texto-pagina">El 26 fue mi entrevista de trabajo. Gracias al amigo tilín pude quedarme para esperarte a que salieras. Nos reencontramos hasta el día 30, donde fuimos al cine y por fin volví a probar esas enchiladas suizas que te juro son un 10/10.</p>
+            </div>
+
+            <!-- PÁGINA 11: 31 DE MAYO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">31 de Mayo</div>
+                <h2 class="titulo-pagina">Misión 10 🌸</h2>
+                <div class="media-container">
+                    <video controls playsinline poster="portada-mision10.jpg">
+                        <source src="video-mision10.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <p class="texto-pagina">Quería que el último día del mes fuera inolvidable. Cuidé minuciosamente la frescura del centro de cada mini gerbera para prepararte este detalle. Así logré la Misión 10: <span>La décima flor entregada a la mujer que tanto amo.</span></p>
+            </div>
+
+            <!-- PÁGINA 12: 1 DE JUNIO -->
+            <div class="page future">
+                <div class="page-decor">❦</div>
+                <div class="fecha-capitulo">Junio</div>
+                <h2 class="titulo-pagina">Hacia el 3er mes</h2>
+                <div class="media-container">
+                    <img src="foto-junio.jpg" alt="Inicio de junio">
+                </div>
+                <p class="texto-pagina">El 1 de junio nos vimos súper temprano para llevarte al trabajo. Fue breve, pero fue el banderazo de salida de nuestro tercer mes juntos. Valoro infinitamente que siempre te preocupes por mí.</p>
+                <p class="texto-pagina">Sigamos compartiendo esta historia. Feliz segundo mes.</p>
+            </div>
+
+        </div>
+
+        <!-- CONTROLES DEL LIBRO -->
+        <div class="controls">
+            <button class="btn-nav" id="btn-prev" onclick="cambiarPagina(-1)">← Voltear</button>
+            <div class="page-indicator" id="page-counter">1 / 12</div>
+            <button class="btn-nav" id="btn-next" onclick="cambiarPagina(1)">Pasar pág. →</button>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT DEL LIBRO 3D -->
+    <script>
+        const pages = document.querySelectorAll('.page');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const counter = document.getElementById('page-counter');
+        
+        let currentPage = 0;
+        const totalPages = pages.length;
+
+        function actualizarControles() {
+            btnPrev.disabled = currentPage === 0;
+            btnNext.disabled = currentPage === totalPages - 1;
+            counter.innerText = `${currentPage + 1} / ${totalPages}`;
+            
+            // Pausar videos al cambiar de página
+            document.querySelectorAll('video').forEach(vid => vid.pause());
+        }
+
+        function cambiarPagina(direccion) {
+            const nuevaPagina = currentPage + direccion;
+            
+            if (nuevaPagina >= 0 && nuevaPagina < totalPages) {
+                pages.forEach((page, index) => {
+                    // Limpiar clases
+                    page.classList.remove('active', 'turned', 'future');
+                    
+                    // Lógica 3D de páginas
+                    if (index < nuevaPagina) {
+                        page.classList.add('turned'); // Se giró a la izquierda
+                    } else if (index > nuevaPagina) {
+                        page.classList.add('future'); // Está esperando a la derecha
+                    } else {
+                        page.classList.add('active'); // Es la página actual
+                        page.scrollTop = 0; // Regresar el scroll arriba
+                    }
+                });
+                
+                currentPage = nuevaPagina;
+                actualizarControles();
+            }
+        }
+
+        actualizarControles();
+    </script>
+</body>
+</html>
