@@ -248,12 +248,24 @@
             background: var(--papel); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
+        /* --- OPTIMIZACIÓN MÓVIL ESTRICTA --- */
         @media screen and (max-height: 700px) {
             .titulo-pagina { font-size: 1.8rem; margin-bottom: 15px; }
             .texto-pagina { font-size: 0.95rem; line-height: 1.6; }
             .media-container { margin-bottom: 15px; }
             .media-container img, .media-container video { max-height: 32vh; }
             .book-container { height: 90vh; }
+        }
+
+        @media screen and (max-width: 480px) {
+            .page { padding: 25px 15px 85px 15px; }
+            .titulo-pagina { font-size: 1.6rem; margin-bottom: 15px; }
+            .texto-pagina { font-size: 0.95rem; }
+            .page.cover .titulo-pagina { font-size: 2.8rem; }
+            .fecha-capitulo { font-size: 0.75rem; letter-spacing: 2px; }
+            .btn-nav { padding: 8px 12px; font-size: 0.85rem; }
+            .bookmark-ribbon { left: 30px; }
+            .controls { padding: 15px 15px; }
         }
     </style>
 </head>
@@ -320,7 +332,6 @@
                 <div class="fecha-capitulo">16 de Mayo</div>
                 <h2 class="titulo-pagina">Odisea del Turibús</h2>
                 <div class="media-container">
-                    <!-- Aquí cambiamos la imagen por el video con su portada -->
                     <video controls playsinline poster="portada-turibus.jpg">
                         <source src="video-turibus.mp4" type="video/mp4">
                     </video>
@@ -356,7 +367,6 @@
                 <div class="fecha-capitulo">23 y 24 de Mayo</div>
                 <h2 class="titulo-pagina">Fresas y Cheesecake</h2>
                 <div class="media-container">
-                    <!-- Aquí insertamos el video y la portada -->
                     <video controls playsinline poster="portada-24mayo.jpg">
                         <source src="video-24mayo.mp4" type="video/mp4">
                     </video>
@@ -375,7 +385,7 @@
                 <p class="texto-pagina">Aquel día tuve que regresarme a Puebla solo unas horas para que no sospecharan de la chamba mi ausencia, más tarde me regresé a CDMX y pudimos vernos para tomar un cafecito juntos, si me preguntas si valió la pena ir de acá pa allá, efectivamente, lo valió ;).</p>
             </div>
 
-<!-- PÁGINA 10: 26 DE MAYO -->
+            <!-- PÁGINA 10: 26 DE MAYO -->
             <div class="page future">
                 <div class="page-decor">❦</div>
                 <div class="fecha-capitulo">26 de Mayo</div>
@@ -407,7 +417,7 @@
                         <source src="video-mision10.mp4" type="video/mp4">
                     </video>
                 </div>
-                <p class="texto-pagina"> Quería que el último día del mes fuera inolvidable, aquel día cuidé minuciosamente cada flor para prepararte este detalle. Así logré la Misión 10: <span>La décima flor entregada a la mujer que tanto amo.(https://youtu.be/zPErznvn1Z4) </span></p>
+                <p class="texto-pagina"> Quería que el último día del mes fuera inolvidable, aquel día cuidé minuciosamente cada flor para prepararte este detalle. Así logré la Misión 10: <span>La décima flor entregada a la mujer que tanto amo. (<a href="https://youtu.be/zPErznvn1Z4" target="_blank" style="color: var(--rosa-mexicano); text-decoration: underline; font-weight: 800;">Ver video</a>)</span></p>
             </div>
 
             <!-- PÁGINA 13: 1 DE JUNIO -->
@@ -427,7 +437,7 @@
         <!-- CONTROLES DEL LIBRO -->
         <div class="controls">
             <button class="btn-nav" id="btn-prev" onclick="cambiarPagina(-1)">← Voltear</button>
-            <div class="page-indicator" id="page-counter">1 / 12</div>
+            <div class="page-indicator" id="page-counter">1 / 13</div>
             <button class="btn-nav" id="btn-next" onclick="cambiarPagina(1)">Pasar pág. →</button>
         </div>
 
