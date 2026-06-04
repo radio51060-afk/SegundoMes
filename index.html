@@ -172,18 +172,8 @@
             background-color: var(--papel-sombra); border: 3px solid #fff; 
         }
 
-        /* AJUSTE CLAVE: SEPARANDO IMÁGENES Y VIDEOS PARA EVITAR CORTES */
-        .media-container img {
+        .media-container img, .media-container video {
             width: 100%; height: auto; max-height: 38vh; object-fit: cover; display: block;
-        }
-
-        .media-container video {
-            width: 100%; 
-            height: auto; 
-            max-height: 55vh; /* Permite que el video vertical sea más alto */
-            object-fit: contain; /* Obliga al navegador a mostrar el video completo sin recortarlo */
-            display: block;
-            background-color: #000; /* Fondo negro elegante para los videos verticales */
         }
 
         .page.cover { justify-content: center; align-items: center; padding: 40px; }
@@ -223,6 +213,7 @@
         
         .page-indicator { font-size: 0.85rem; color: #D4AF37; font-weight: 600; letter-spacing: 2px; }
         
+        /* AQUÍ ESTÁ EL ENLACE EXACTO AL MES 1 */
         .btn-nav.home-link { 
             position: absolute; top: 15px; right: 15px; z-index: 30; 
             background: var(--papel); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -234,8 +225,7 @@
             .titulo-pagina { font-size: 1.8rem; margin-bottom: 15px; }
             .texto-pagina { font-size: 0.95rem; line-height: 1.6; }
             .media-container { margin-bottom: 15px; }
-            .media-container img { max-height: 32vh; }
-            .media-container video { max-height: 48vh; } /* Ajuste extra de altura para videos en celulares pequeños */
+            .media-container img, .media-container video { max-height: 32vh; }
         }
 
         @media screen and (max-width: 480px) {
@@ -256,6 +246,7 @@
         
         <div class="bookmark-ribbon"></div>
 
+        <!-- EL BOTÓN CON LA URL SOLICITADA PARA VOLVER AL MES 1 -->
         <a href="https://radio51060-afk.github.io/Nuestra-historia/" class="btn-nav home-link">Volver al Mes 1</a>
 
         <div class="pages-wrapper" id="pages-wrapper">
@@ -380,7 +371,7 @@
                 <div class="fecha-capitulo">31 de Mayo</div>
                 <h2 class="titulo-pagina">Misión 10 🌸</h2>
                 <div class="media-container">
-                    <video controls playsinline poster="portada-mision10.jpg">
+                    <video controls playsinline poster="portada-mision10.jpg" style="object-fit: contain; background-color: #000; max-height: 55vh;">
                         <source src="video-mision10.mp4" type="video/mp4">
                     </video>
                 </div>
