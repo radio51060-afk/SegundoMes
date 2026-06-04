@@ -43,8 +43,8 @@
         .book-container {
             width: 100%;
             max-width: 500px;
-            height: 85vh; /* Fallback para navegadores viejos */
-            height: 85svh; /* Ajuste dinámico perfecto para iPhone */
+            height: 85vh; 
+            height: 85svh; 
             max-height: 850px;
             position: relative;
             background-color: var(--papel-sombra);
@@ -109,7 +109,7 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--papel);
             border-radius: 0 12px 12px 0;
-            padding: 35px 25px 120px 25px; /* Más espacio abajo para el scroll */
+            padding: 35px 25px 120px 25px; 
             
             border: 1px solid rgba(228, 0, 124, 0.1);
             outline: 1px solid rgba(228, 0, 124, 0.05);
@@ -123,7 +123,6 @@
             display: flex;
             flex-direction: column;
             
-            /* MAGIA PARA HABILITAR EL SCROLL EN IPHONE */
             overflow-y: auto; 
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch; 
@@ -134,7 +133,6 @@
             pointer-events: none;
         }
 
-        /* Estados 3D de las páginas */
         .page.active {
             opacity: 1; transform: rotateY(0deg); z-index: 10; pointer-events: all;
             box-shadow: 2px 0 15px rgba(0,0,0,0.03);
@@ -174,8 +172,18 @@
             background-color: var(--papel-sombra); border: 3px solid #fff; 
         }
 
-        .media-container img, .media-container video {
+        /* AJUSTE CLAVE: SEPARANDO IMÁGENES Y VIDEOS PARA EVITAR CORTES */
+        .media-container img {
             width: 100%; height: auto; max-height: 38vh; object-fit: cover; display: block;
+        }
+
+        .media-container video {
+            width: 100%; 
+            height: auto; 
+            max-height: 55vh; /* Permite que el video vertical sea más alto */
+            object-fit: contain; /* Obliga al navegador a mostrar el video completo sin recortarlo */
+            display: block;
+            background-color: #000; /* Fondo negro elegante para los videos verticales */
         }
 
         .page.cover { justify-content: center; align-items: center; padding: 40px; }
@@ -193,12 +201,10 @@
             background: linear-gradient(to top, var(--papel) 75%, rgba(255, 252, 253, 0));
             z-index: 20;
             border-radius: 0 0 12px 0;
-            /* Permite que el dedo atraviese la parte transparente para scrollear */
             pointer-events: none; 
         }
 
         .btn-nav, .page-indicator {
-            /* Reactiva el toque solo en los botones y el texto */
             pointer-events: auto; 
         }
 
@@ -228,11 +234,11 @@
             .titulo-pagina { font-size: 1.8rem; margin-bottom: 15px; }
             .texto-pagina { font-size: 0.95rem; line-height: 1.6; }
             .media-container { margin-bottom: 15px; }
-            .media-container img, .media-container video { max-height: 32vh; }
+            .media-container img { max-height: 32vh; }
+            .media-container video { max-height: 48vh; } /* Ajuste extra de altura para videos en celulares pequeños */
         }
 
         @media screen and (max-width: 480px) {
-            /* Padding ajustado para asegurar scroll sin tocar los botones */
             .page { padding: 25px 15px 100px 15px; } 
             .titulo-pagina { font-size: 1.6rem; margin-bottom: 15px; }
             .texto-pagina { font-size: 0.95rem; }
@@ -327,7 +333,7 @@
                 <p class="texto-pagina">Nos vimos muy temprano y por fin te entregué tu flor número 9 junto con el "Pato Mandarina", un peluche que había comprado para ti desde el inicio de 2024. Después de tu trabajo fuimos a cenar hamburguesas y al cine. Así cerró esa semana.</p>
             </div>
 
-            <div class="page future">
+           <div class="page future">
                 <div class="page-decor">❦</div>
                 <div class="fecha-capitulo">23 y 24 de Mayo</div>
                 <h2 class="titulo-pagina">Fresas y Cheesecake</h2>
